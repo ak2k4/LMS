@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Named User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome</h1>
+       
+        <div id="insertForm" class="form">
+            <h2>Insert Your Information</h2>
+            <form id="insertInfoForm" method="post" action="{{ url_for('insert') }}" onsubmit="return confirmProductAssignment()">
+               
+                <label for="psNo">PS No:</label>
+                <input type="text" id="psNo" name="psNo" required>
+                <button type="button" onclick="fetchUserDetails()">Fetch Details</button>
+               
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+               
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required value="{{ location }}">
+               
+                <label for="department">Department:</label>
+                {% if deptname.lower() == 'all' %}
+                    <select id="department" name="dept">
+                        {% for department in distinct_departments %}
+                        <option value="{{ department }}">{{ department }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input type="text" id="department" name="dept" readonly value="{{ deptname }}">
+                {% endif %}
+               
+                <label for="allocateLicence">Allocate Licence:</label>
+                <select id="allocateLicence" name="product">
+                    {% for product in distinct_products %}
+                    {% if (product == selected_product) %}
+                    <option value="{{ product }}" selected="selected">{{ product }}</option>
+                    {% else %}
+                    <option value="{{ product }}">{{ product }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+               
+                <label for="emailId">Email ID:</label>
+                <input type="email" id="emailId" name="emailId" required>
+               
+                <label for="loadUsers">Load Users:</label>
+                <select id="loadUsers" name="loadUsers" onchange="toggleSubmitButton()">
+                    <option value="NO">NO</option>
+                    <option value="YES">YES</option>
+                </select>
+               
+                <div id="buttonContainer">
+                    <button type="submit" class="submitcolor" id="submitButton" style="display: none;">Submit</button>
+                    <button type="button" class="cancel" onclick="cancelForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+ 
+    <script>
+        function fetchUserDetails() {
+            const psno = document.getElementById('psNo').value;
+            if (!psno) {
+                alert('Please enter a PS No.');
+                return;
+            }
+ 
+            fetch('/get_user_details', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ psno: psno }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('emailId').value = data.emailid;
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+ 
+        function confirmProductAssignment() {
+            const product = document.getElementById('allocateLicence').value;
+            return confirm('Are you sure you want to assign the product: ' + product + '?');
+        }
+       
+        function toggleSubmitButton() {
+            const loadUsers = document.getElementById('loadUsers').value;
+            const submitButton = document.getElementById('submitButton');
+ 
+            if (loadUsers === 'YES') {
+                submitButton.style.display = 'block'; // Show the submit button
+            } else {
+                submitButton.style.display = 'none'; // Hide the submit button
+            }
+        }
+ 
+        // Call toggleSubmitButton initially to set button visibility based on default value
+        toggleSubmitButton();
+ 
+        function cancelForm() {
+            // Redirect to the main route (replace 'main_route_url' with your actual main route URL)
+            window.location.href = `{{ url_for('dept', location='LTEHE-VADODARA', deptname='All') }}`;
+        }
+ 
+        document.addEventListener('DOMContentLoaded', function() {
+        var selectElement = document.getElementById('allocateLicence');
+        var options = selectElement.options;
+ 
+        // Function to find index of an option by its value
+        function findOptionIndexByValue(value) {
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+ 
+        // Event listener for change in selection
+        selectElement.addEventListener('change', function() {
+            var currentValue = options[this.selectedIndex].value;
+            updateCurrentValue(currentValue);
+        });
+ 
+        // Event listener for keyup to handle manual input
+        selectElement.addEventListener('keyup', function() {
+            var userInput = this.value.trim();
+            var currentIndex = findOptionIndexByValue(userInput);
+ 
+            if (currentIndex !== -1) {
+                // If the input matches an existing option, select it
+                this.selectedIndex = currentIndex;
+                updateCurrentValue(userInput);
+            } else {
+                // If no match found, add the input as a new option
+                var newOption = document.createElement('option');
+                newOption.value = userInput;
+                newOption.text = userInput;
+                this.appendChild(newOption);
+                this.selectedIndex = options.length - 1;
+                updateCurrentValue(userInput);
+            }
+        });
+ 
+        // Function to update the current value
+        function updateCurrentValue(value) {
+            // Here you can update any other related functionality based on the current value
+            console.log('Current value:', value);
+        }
+    });
+    </script>
+   
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessed Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <!-- Flash Messages Section -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flashes">
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+ 
+    <div class="container">
+        <h2>Information for PS No: {{ psno }}</h2>
+        <table class="tbl centered-table">
+            <tr>
+                <td><strong>Name:</strong></td>
+                <td>{{ name }}</td>
+            </tr>
+            <tr>
+                <td><strong>Location:</strong></td>
+                <td>{{ location }}</td>
+            </tr>
+            <tr>
+                <td><strong>Department:</strong></td>
+                <td>{{ department }}</td>
+            </tr>
+            <tr>
+                <td><strong>Email ID:</strong></td>
+                <td>{{ emailid }}</td>
+            </tr>
+            <tr>
+                <td><strong>Account Created:</strong></td>
+                <td>{{ loadusers }}</td>
+            </tr>
+            <tr>
+                <td><strong>Product Assigned:</strong></td>
+                <td>
+                   
+                    <table>
+                        {% for product in products %}
+                        <tr>
+                            <td>{{ product }}</td>
+                            <td>
+                                {% if admin_name %}
+                                <button onclick="deleteProduct('{{ product }}')">Revoke</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                   
+                </td>
+            </tr>
+        </table>
+        <a href="{{ url_for('dept', location=location, deptname='All') }}">Home</a>
+    </div>
+ 
+    <script>
+        function deleteProduct(product) {
+            if (confirm('Are you sure you want to revoke the product: ' + product + '?')) {
+                fetch('/delete-product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ product: product }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // Reload the page to reflect the changes
+                    } else {
+                        alert('Failed to delete product: ' + data.error);
+                    }
+                })
+                /*.catch(error => {
+                    console.error('Fetch Error:', error);
+                    alert('Failed to delete product. Please try again later.');
+                });*/
+            }
+        }
+    </script>
+</body>
+</html>

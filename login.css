@@ -1,0 +1,321 @@
+login.css
+/* Additional CSS for Export button and search filter */
+.centered-container {
+    display: flex;
+    justify-content: center; /* Center the items horizontally */
+    align-items: center; /* Center the items vertically */
+    margin-bottom: 20px; /* Add some space below the container */
+}
+ 
+.search-container {
+    display: flex;
+    align-items: center;
+    margin-right: 20px; /* Add some space between the search box and the export button */
+}
+ 
+.search-container input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+ 
+.export-button {
+    background-color: #000000;
+    color: white;
+    padding: 11px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+ 
+.export-button:hover {
+    background-color: #87CEEB;
+}
+ 
+/* Other existing CSS remains unchanged */
+ 
+.dropdown {
+    display: inline-block;
+    padding: 2px;
+    margin: 2px;
+}
+ 
+/* Style for dropdown button */
+.dropdown-btn {
+    background-color: #000000;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+ 
+/* Style for dropdown content */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+}
+ 
+/* Style for dropdown content items */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+ 
+/* Change color of dropdown content items on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+ 
+/* Show dropdown content when dropdown button is hovered over */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+ 
+.dropdown2 {
+    display: inline-block;
+    padding: 2px;
+    margin: 2px;
+}
+ 
+/* Style for dropdown button */
+.dropdown-btn2 {
+    background-color: #000000;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+ 
+/* Style for dropdown content */
+.dropdown-content2 {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+}
+ 
+/* Style for dropdown content items */
+.dropdown-content2 a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+ 
+/* Change color of dropdown content items on hover */
+.dropdown-content2 a:hover {
+    background-color: #f1f1f1;
+}
+ 
+/* Show dropdown content when dropdown button is hovered over */
+.dropdown2:hover .dropdown-content2 {
+    display: block;
+}
+ 
+.menu-bar {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    margin: 0;
+    padding: 10px;
+    background-color:#000000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+ 
+ 
+body {
+    margin: 2px;
+    background: linear-gradient(to right, #93b3dd, #0066ff);
+    align-items: center;
+    padding-top: 0px;
+    font-family: Arial, sans-serif;
+}
+ 
+.container {
+    text-align: center;
+}
+ 
+h1 {
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+ 
+h2 {
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+ 
+#welcome-message {
+    font-size: 2em;
+    color: white;
+    margin-bottom: 40px;
+}
+ 
+.table1 {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Center the table horizontally */
+}
+ 
+.table1 th, td {
+    padding: 16px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-weight: bold; /* Make table data bold */
+}
+ 
+.table1 th {
+    background-color: #000000;
+    color: white;
+}
+ 
+.table1 td {
+    background-color: #f9f9f9;
+}
+ 
+.table1 tr:nth-child(even) td {
+    background-color: #87CEEB;
+}
+ 
+.table-content {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    overflow-x: auto;
+    font-size: small;
+}
+ 
+.table-content th,
+.table-content td {
+    padding: 0px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-weight: bold;
+}
+ 
+.table-content th {
+    background-color: #000000;
+    color: rgb(247, 245, 245);
+}
+ 
+.table-content td {
+    background-color: #fff3f3;
+}
+ 
+.table-content tr:nth-child(even) td {
+    background-color: #87CEEB;
+}
+ 
+.logbutton:hover {
+    background-color: #87CEEB;
+}
+ 
+.heading {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+ 
+/* Common class for uniform button sizing */
+.uniform-button {
+    background-color: #000000;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+ 
+/* Specific button styles */
+.export-button:hover,
+.search-form button:hover,
+.logbutton:hover,
+.dropdown-btn:hover,
+.dropdown-btn2:hover {
+    background-color: #87CEEB;
+}
+ 
+/* Apply common sizing to dropdown buttons */
+.dropdown-btn,
+.dropdown-btn2{
+    padding: 10px 40px; /* Adjust padding for uniform size */
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    background-color: #000000;
+    /* width: 250px; /* Set the desired width */
+   /* height: 40px; Set the desired height */
+   
+     
+}
+.logbutton {
+    margin-top: 90px;
+    width: 250px;
+    height: 40px;
+ 
+}
+ 
+.dropdown-btn:hover,
+.dropdown-btn2:hover {
+    background-color: #87CEEB;
+}
+ 
+/* Dropdown content styles remain unchanged */
+.dropdown-content,
+.dropdown-content2 {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+}
+ 
+@media (max-width: 600px) {
+    .table-content {
+        width: 100%;
+        max-width: 100%;
+    }
+ 
+    .table-content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+.home-button {
+    background-color: #000000;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+ 
+.home-button:hover {
+    background-color: #87CEEB;
+}

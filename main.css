@@ -1,0 +1,228 @@
+mian.css
+/* main.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #87CEEB, #007acc);
+}
+ 
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 70px auto;
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+ 
+h1, h2 {
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+ 
+.centered-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+ 
+.centered-table td, .centered-table th {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+}
+ 
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+ 
+button:hover {
+    background-color: #0056b3;
+}
+ 
+.form {
+    display: block;
+}
+ 
+form {
+    display: flex;
+    flex-direction: column;
+}
+ 
+#insertForm {
+    display: block; /* Ensure the form is displayed */
+}
+ 
+label {
+    margin: 10px 0 5px;
+}
+ 
+input {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+ 
+input[type="submit"] {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+ 
+input[type="submit"]:hover {
+    background-color: #218838; /* Green color on hover */
+}
+ 
+button[type="button"].cancel {
+    background-color: #dc3545;
+    color: #fff;
+}
+ 
+button[type="button"].cancel:hover {
+    background-color: #c82333; /* Red color on hover */
+}
+ 
+.flashes {
+    margin: 20px 0;
+}
+ 
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+ 
+.flash.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+ 
+.flash.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+ 
+select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* Remove default arrow for Safari */
+    -moz-appearance: none; /* Remove default arrow for Firefox */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23777"><path d="M7 10l5 5 5-5z" /></svg>'); /* Custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+ 
+/* Style the dropdown arrow */
+select::-ms-expand {
+    display: none; /* Hide the default arrow in IE */
+}
+ 
+/* Style the options */
+select option {
+    font-size: 16px;
+}
+ 
+.submitcolor {
+    background-color: #007acc;
+}
+ 
+.submitcolor:hover {
+    background-color: #28a745;
+}
+ 
+.table-content {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    overflow-x: auto;
+    font-size: small;
+}
+ 
+.table-content th,
+.table-content td {
+    padding: 0px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-weight: bold;
+}
+ 
+.table-content th {
+    background-color: #000000;
+    color: rgb(247, 245, 245);
+}
+ 
+.table-content td {
+    background-color: #fff3f3;
+}
+ 
+.table-content tr:nth-child(even) td {
+    background-color: #87CEEB;
+}
+.modify-buttons {
+    white-space: nowrap; /* Prevent buttons from wrapping */
+}
+.modify-buttons .modify-actions {
+    display: flex;
+    align-items: center;
+}
+.modify-buttons button {
+    margin-right: 5px; /* Optional: Add spacing between buttons */
+    padding: 5px 2px; /* Adjust padding for smaller buttons */
+    font-size: 12px;/* Adjust font size for smaller buttons */
+    margin: 0;
+}
+.modify-buttons .modify-actions button.delete:hover {
+    background-color: red; /* Change background color on hover */
+    color: white; /* Optional: Change text color */
+}
+/* Additional CSS for Export button and search filter */
+.centered-container {
+    display: flex;
+    justify-content: center; /* Center the items horizontally */
+    align-items: center; /* Center the items vertically */
+    margin-bottom: 20px; /* Add some space below the container */
+}
+ 
+.search-export-container {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 20px; /* Optional: Add some space below the container */
+}
+ 
+.search-container {
+    margin-right: 10px; /* Optional: Add space between search box and export button */
+}
+ 
+.export-button {
+    padding: 11px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    background-color: #000000;
+    color: white;
+}
+ 
+ 
+ 
+.export-button:hover {
+    background-color: #87CEEB;
+}
+ 

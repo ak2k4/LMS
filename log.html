@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>
+        All Data
+    </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <script src="{{ url_for('static', filename='js/excellibrary.js') }}"></script></head>
+ 
+ 
+<body>
+ 
+<div class="menu-bar">
+<button class="dropdown-btn uniform-button" onclick="window.location.href='/details/{{location}}/All'">Home</button>
+</div>
+<h1 class="heading"> Data Table</h1>
+<div class="centered-container">
+    <div class="search-container">
+        <input type="text" id="search-value" placeholder="Search by PSNO/Name" onkeyup="filterTable()">
+    </div>
+    <button class="export-button" onclick="exportTableToExcel('myTable', 'table_data')">Export to Excel</button>
+</div>
+<table id="myTable" class="table-content">
+    <thead>
+        <tr>
+            {% for column in columns %}
+                <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in data %}
+            <tr>
+                <!-- {% for cell in row %}
+                    <td>{{ cell }}</td>
+                {% endfor %} -->
+                <td><a href="/access/{{ row[0] }}">{{ row[0] }}</a></td>
+                    {% for cell in row[1:] %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+ 
+<script>
+        function exportTableToExcel(tableID, filename = '') {
+            var table = document.getElementById(tableID);
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, filename ? filename + '.xlsx' : 'table_data.xlsx');
+        }
+ 
+        function filterTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("search-value");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+ 
+            // Loop through all table rows, starting from the second row (index 1)
+            for (i = 1; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                var found = false; // Flag to check if any cell in this row matches the filter
+ 
+                // Loop through all cells in current row
+                for (j = 0; j < td.length; j++) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break; // Exit inner loop once a match is found in current row
+                    }
+                }
+ 
+                // Set display style based on whether any cell matched the filter
+                if (found) {
+                    tr[i].style.display = ""; // Show the row
+                } else {
+                    tr[i].style.display = "none"; // Hide the row if no match found
+                }
+            }
+        }
+ 
+</script>
+ 
+</body>
+</html>

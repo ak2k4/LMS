@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Named User Management</title>
+    <script src="{{ url_for('static', filename='js/excellibrary.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome</h1>
+       
+        <div id="insertForm" class="form">
+            <h2>Insert Your Information</h2>
+            <form id="insertInfoForm" method="post" action="{{ url_for('insert_aa') }}" onsubmit="return confirmProductAssignment()">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" list="locationList" required>
+                <datalist id="locationList">
+                    {% for distinct_location in distinct_locations %}
+                        <option value="{{ distinct_location }}">{{ distinct_location }}</option>
+                    {% endfor %}
+                </datalist>
+               
+                <label for="department">Department:</label>
+                <input type="text" id="department" name="dept" list="departmentList">
+                <datalist id="departmentList">
+                    {% for department in distinct_departments %}
+                        <option value="{{ department }}">{{ department }}</option>
+                    {% endfor %}
+                </datalist>
+               
+                <label for="allocateLicence">Allocate Licence:</label>
+                <input type="text" id="allocateLicenceInput" name="product" list="productList">
+                <datalist id="productList">
+                    {% for product in distinct_products %}
+                        <option value="{{ product }}">{{ product }}</option>
+                    {% endfor %}
+                </datalist>
+               
+                <label for="allocationLimit">Allocation Limit:</label>
+                <input type="number" id="allocationLimit" name="allocationLimit" required>
+       
+                <div id="buttonContainer">
+                    <button type="submit" class="submitcolor" id="submitButton">Submit</button>
+                    <button type="button" class="cancel" onclick="cancelForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+   
+    <div class="centered-container">
+        <div class="small-controls">
+            <div class="search-container">
+                <input type="text" id="search-value" placeholder="Search" onkeyup="filterTable()">
+            </div>
+            <button class="export-button" onclick="exportTableToExcel('myTable', 'table_data')">Export to Excel</button>
+        </div>
+    </div>
+   
+    <div class="centered-container">
+        <table id="myTable" class="table-content">
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                    <th>Action</th><!-- New column for edit and delete buttons -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    {% for cell in row[1:-1] %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                    <td class="allocation-limit">{{ row[-1] }}</td> <!-- Last cell for allocation_limit -->
+                    <td class="modify-buttons">
+                        <div class="modify-actions">
+                            <button class="small-button edit" onclick="editRow('{{ row[0] }}', '{{ row[1] }}', '{{ row[2] }}', '{{ row[3] }}')">Edit</button>
+                            <button class="small-button update" style="display: none;" onclick="updateRow('{{ row[0] }}', '{{ row[1] }}', '{{ row[2] }}')">Update</button>
+                            <button class="small-button cancel" style="display: none;" onclick="cancelEdit('{{ row[0] }}', '{{ row[1] }}', '{{ row[2] }}')">Cancel</button>
+                            <button class="small-button delete" onclick="deleteallocation('{{ row[0] }}', '{{ row[1] }}', '{{ row[2] }}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+       
+    </div>
+   
+    <script>
+       function editRow(location, department, product) {
+    var table = document.getElementById('myTable');
+    var rows = table.getElementsByTagName('tr');
+ 
+    for (var i = 1; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        var rowLocation = cells[0].textContent.trim();
+        var rowDepartment = cells[1].textContent.trim();
+        var rowProduct = cells[2].textContent.trim();
+ 
+        if (rowLocation === location && rowDepartment === department && rowProduct === product) {
+            var allocationLimitCell = cells[3]; // Allocation Limit cell
+ 
+            // Convert allocation_limit cell to editable input field
+            var currentLimit = allocationLimitCell.textContent.trim();
+            allocationLimitCell.innerHTML = '<input type="number" value="' + currentLimit + '" id="editedLimit">';
+ 
+            // Toggle buttons
+            var editButton = rows[i].getElementsByClassName('edit')[0];
+            var updateButton = rows[i].getElementsByClassName('update')[0];
+            var cancelButton = rows[i].getElementsByClassName('cancel')[0];
+ 
+            editButton.style.display = 'none';
+            updateButton.style.display = 'inline-block';
+            cancelButton.style.display = 'inline-block';
+ 
+            // Store original allocation limit in a data attribute for cancel functionality
+            allocationLimitCell.dataset.originalLimit = currentLimit;
+ 
+            break;
+        }
+    }
+}
+ 
+function updateRow(location, department, product) {
+    var editedLimit = document.getElementById('editedLimit').value;
+ 
+    // Perform AJAX call to update allocation_limit
+    var url = `/update-allocation/${location}/${department}/${product}`;
+ 
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ new_allocation: editedLimit })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Record updated successfully');
+            location.reload(); // Reload the page or update the table as needed
+           
+        } else {
+            alert('Failed to update record: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+ 
+function cancelEdit(location, department, product) {
+    var table = document.getElementById('myTable');
+    var rows = table.getElementsByTagName('tr');
+ 
+    for (var i = 1; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        var rowLocation = cells[0].textContent.trim();
+        var rowDepartment = cells[1].textContent.trim();
+        var rowProduct = cells[2].textContent.trim();
+ 
+        if (rowLocation === location && rowDepartment === department && rowProduct === product) {
+            var allocationLimitCell = cells[3]; // Allocation Limit cell
+ 
+            // Restore original allocation_limit value
+            var originalLimit = allocationLimitCell.dataset.originalLimit;
+            allocationLimitCell.textContent = originalLimit;
+ 
+            // Toggle buttons
+            var editButton = rows[i].getElementsByClassName('edit')[0];
+            var updateButton = rows[i].getElementsByClassName('update')[0];
+            var cancelButton = rows[i].getElementsByClassName('cancel')[0];
+ 
+            editButton.style.display = 'inline-block';
+            updateButton.style.display = 'none';
+            cancelButton.style.display = 'none';
+ 
+            break;
+        }
+    }
+}
+ 
+ 
+function deleteallocation(location, department, product) {
+    if (confirm('Are you sure you want to delete the record with location: ' + location + ', department: ' + department + ', product: ' + product + '?')) {
+        // Perform AJAX call to delete the record
+        var url = `/delete-allocation/${location}/${department}/${product}`;
+ 
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // No need to stringify data here since it's in the URL path
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Record deleted successfully');
+                // Reload the page or update the table as needed
+                location.reload();
+            } else {
+                alert('Failed to delete record: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
+ 
+ 
+        function exportTableToExcel(tableID, filename = '') {  
+            var table = document.getElementById(tableID);
+           
+            // Clone the table
+            var clonedTable = table.cloneNode(true);
+           
+            // Remove the last column (Action column)
+            var rows = clonedTable.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                if (cells.length > 0) {
+                    rows[i].removeChild(cells[cells.length - 1]);
+                }
+            }
+           
+            // Export to Excel
+            var wb = XLSX.utils.table_to_book(clonedTable, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, filename ? filename + '.xlsx' : 'table_data.xlsx');
+        }
+ 
+        function filterTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("search-value");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+ 
+            for (i = 1; i < tr.length; i++) {
+                tr[i].style.display = "none"; // Hide all rows initially
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = ""; // Show the row if any cell matches the search
+                            break; // Exit the loop once a match is found
+                        }
+                    }
+                }
+            }
+        }
+ 
+        function confirmProductAssignment() {
+            const product = document.getElementById('allocateLicenceInput').value;
+            return confirm('Are you sure you want to assign the product: ' + product + '?');
+        }
+ 
+        function cancelForm() {
+            // Redirect to the main route (replace 'main_route_url' with your actual main route URL)
+            window.location.href = `{{ url_for('dept', location='LTEHE-VADODARA', deptname='All') }}`;
+        }
+ 
+ 
+        document.addEventListener('DOMContentLoaded', function() {
+            var locationInput = document.getElementById('location');
+            var locationDataList = document.getElementById('locationList').options;
+ 
+            var departmentInput = document.getElementById('department');
+            var departmentDataList = document.getElementById('departmentList').options;
+ 
+            var productInput = document.getElementById('allocateLicenceInput');
+            var productDataList = document.getElementById('productList').options;
+ 
+            function addOptionIfNotExists(input, dataList) {
+                var val = input.value.trim(); // Trim to remove any leading/trailing spaces
+                var found = false;
+ 
+                // Check if the value already exists in the datalist options
+                for (var i = 0; i < dataList.length; i++) {
+                    if (dataList[i].value === val) {
+                        found = true;
+                        break;
+                    }
+                }
+ 
+                // If the value is not found, add it as a new option to the datalist
+                if (!found && val !== '') { // Also ensure val is not empty
+                    var newOption = document.createElement('option');
+                    newOption.value = val;
+                    dataList.add(newOption); // Append the new option to the datalist
+                }
+            }
+ 
+            // Event listener for location input
+            locationInput.addEventListener('input', function() {
+                addOptionIfNotExists(locationInput, locationDataList);
+            });
+ 
+            // Event listener for department input
+            departmentInput.addEventListener('input', function() {
+                addOptionIfNotExists(departmentInput, departmentDataList);
+            });
+ 
+            // Event listener for product input
+            productInput.addEventListener('input', function() {
+                addOptionIfNotExists(productInput, productDataList);
+            });
+        });
+    </script>
+</body>
+</html>
+ 
+ 
+addallocation.html^^
+ 
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Named User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div class="menu-bar">
+        <div class="dropdown2">
+            <button type="button" class="dropdown-btn uniform-button">Location: {{ location }}</button>
+            <div class="dropdown-content2">
+                {% if admin_name %}
+                {% for distinct_location in distinct_locations %}
+                    <a href="/details/{{ distinct_location }}/All">{{ distinct_location }}</a>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+       
+        <div class="dropdown">
+           
+            <button type="button" class="dropdown-btn uniform-button">Department: {{ deptname if deptname else 'All' }}</button>
+           
+            {% if admin_name %}
+           
+            <div class="dropdown-content">
+                <a href="/details/{{ location }}/All">ALL</a>
+                    {% for department in distinct_departments %}
+                        <a href="/details/{{ location }}/{{ department }}">{{ department }}</a>
+                    {% endfor %}
+            </div>
+            {% else %}
+           
+                <div class="dropdown">
+                    <a href="/details/{{ location }}"></a>
+                    {% for department in user_department %}
+                            <a href="/details/{{ location }}/{{ department }}">{{ department }}</a>
+                        {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="dropdown" id="addAllocationButton">
+            {% if admin_name %}
+                <button class="dropdown-btn uniform-button" onclick="window.location.href='/addallocation'">Add Allocation</button>
+            {% endif %}
+            <button class="dropdown-btn uniform-button" onclick="window.location.href='/log'">Log</button>
+        </div>
+    </div>
+   
+    <div class="container">
+        <h1 id="welcome-message">Named User Management System</h1>
+        <h2>Welcome, {{ session['name'] }}!</h2>
+ 
+        <table class="table1">
+            <thead>
+                <tr>
+                    <th>PRODUCT</th>
+                    {% for product in distinct_products %}
+                        <th>{{ product }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Allocated</td>
+                    {% for product in distinct_products %}
+                        <td>{{ product_data[product]['count'] }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Allocation_limit</td>
+                    {% for product in distinct_products %}
+                        <td>{{ product_data[product]['total'] if product_data[product]['total'] is not none else 'None' }}</td>
+                    {% endfor %}
+                </tr>
+                {% if admin_name %}
+                    <td>Action</td>
+                    {% for product in distinct_products %}
+                        <td>
+                            <a href="#"
+                               data-allocated="{{ product_data[product]['count'] }}"
+                               data-limit="{{ product_data[product]['total'] if product_data[product]['total'] is not none else 'None' }}"
+                               onclick="checkAllocation(event, '{{ product }}')">Grant</a>
+                        </td>
+                    {% endfor %}
+                {% endif %}
+ 
+            </tbody>
+        </table>
+       
+        <h2>Data Table</h2>
+        <div class="centered-container">
+            <div class="search-container">
+                <input type="text" id="search-value" placeholder="Search by PSNO/Name" onkeyup="filterTable()">
+            </div>
+            <button class="export-button" onclick="exportTableToExcel('myTable', 'table_data')">Export to Excel</button>
+        </div>
+ 
+        <div class="table-container">
+            <table class="table-content" id="myTable">
+                <thead>
+                    <tr>
+                        {% for column in columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td><a href="/access/{{ row[0] }}">{{ row[0] }}</a></td>
+                            {% for cell in row[1:] %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+ 
+    <script src="{{ url_for('static', filename='js/excellibrary.js') }}"></script>
+ 
+    <script>
+        function exportTableToExcel(tableID, filename = '') {
+            var table = document.getElementById(tableID);
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, filename ? filename + '.xlsx' : 'table_data.xlsx');
+        }
+ 
+        function filterTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("search-value");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+ 
+            for (i = 1; i < tr.length; i++) {
+                tr[i].style.display = "none"; // Hide all rows initially
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = ""; // Show the row if any cell matches the search
+                            break; // Exit the loop once a match is found
+                        }
+                    }
+                }
+            }
+        }
+ 
+        function checkAllocation(event, product) {
+            event.preventDefault();
+            var link = event.target;
+            var allocated = parseInt(link.getAttribute('data-allocated'));
+            var limit = link.getAttribute('data-limit') === 'None' ? 0 : parseInt(link.getAttribute('data-limit'));
+ 
+            if (allocated >= limit) {
+                alert('No more users can be granted for ' + product + '. Allocation limit reached.');
+            } else {
+                window.location.href = '/adduser?selected_product=' + product;
+            }
+        }
+    </script>
+</body>
+</html>
+ 
+ 
